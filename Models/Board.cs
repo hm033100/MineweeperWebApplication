@@ -155,24 +155,17 @@ namespace MineweeperWebApplication.Service
 
         public void floodFill(int r, int c)
         {
-            int[] x = { -1, 1, 0, 0, -1, -1, 1, 1 };
-            int[] y = { 0, 0, 1, -1, -1, 1, 1, -1 };
-            for (int i = 0; i < 8; i++)
+            if (isValid(r, c) && !this.theGrid[r, c].IsLive && !this.theGrid[r, c].isVisible)
             {
-                if (isValid(r + x[i], c + y[i]))
+                this.theGrid[r, c].isVisible = true;
+                if (this.theGrid[r, c].liveNeighbors == 0)
                 {
-                    if (theGrid[r + x[i], c + y[i]].isVisible == false && theGrid[r + x[i], c + y[i]].liveNeighbors == 0)
-                    {
-                        theGrid[r + x[i], c + y[i]].isVisible = true;
-                        floodFill(r + x[i], c + y[i]);
-                    }
-                    else
-                    {
-                        theGrid[r + x[i], c + y[i]].isVisible = true;
-                    }
+                    floodFill(r + 1, c);
+                    floodFill(r - 1, c);
+                    floodFill(r, c + 1);
+                    floodFill(r, c - 1);
                 }
             }
-
         }
 
         private bool isValid(int r, int c)
