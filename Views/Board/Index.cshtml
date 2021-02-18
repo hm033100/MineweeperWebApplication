@@ -1,0 +1,53 @@
+﻿<style>
+    game-board {
+        height: calc(100% - 184.05);
+    }
+
+    .game-button {
+        width: 80px;
+        height: 80px;
+        border: grey;
+        margin: 3px;
+    }
+
+    .button-zone {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .line-break {
+        flex-basis: 100%;
+        height: 0;
+    }
+
+    .game-button-image {
+        width: 95%;
+        height: 95%;
+    }
+</style>
+
+
+<form>
+
+    <div class="button-zone game-board">
+        @for (int i = 0; i < ViewBag.Board.size; i++)
+        {
+            @for (int j = 0; j < ViewBag.Board.size; j++)
+            {
+                @if (@ViewBag.Board.theGrid[i, j].isVisible == true && @ViewBag.Board.theGrid[i, j].liveNeighbors == 9)
+                {
+                    <button class="game-button" type="submit" value="visited" name="rowAndColumn" asp-controller="Board" asp-action="HandleButtonClick">
+                        <img class="game-button-image" src="~/img/bomb.png" />
+                    </button> }
+                else if (@ViewBag.Board.theGrid[i, j].isVisible == true)
+                {
+                    <button class="game-button" type="submit" value="visited" name="rowAndColumn" asp-controller="Board" asp-action="HandleButtonClick">
+                        @ViewBag.Board.theGrid[i, j].liveNeighbors
+                    </button> }
+                else
+                {
+                    <button class="game-button" type="submit" value="@i,@j" name="rowAndColumn" asp-controller="Board" asp-action="HandleButtonClick"> </button>}}
+            <div class="line-break"></div>}
+    </div>
+
+</form>

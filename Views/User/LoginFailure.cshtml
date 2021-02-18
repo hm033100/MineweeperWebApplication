@@ -1,0 +1,10 @@
+﻿@model MineweeperWebApplication.Models.User
+
+<div>
+    <h4>Failed Login! Username or Password is Incorrect!</h4>
+    <hr />
+</div>
+<div>
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    <a asp-action="LoginForm">Back to List</a>
+</div>
