@@ -1,0 +1,34 @@
+﻿@model MineweeperWebApplication.Models.Board
+
+@for (int i = 0; i < Model.size; i++)
+
+    @for (int j = 0; j < Model.size; j++)
+    {
+        <div id="@i-@j">
+            @if (Model.theGrid[i, j].isVisible == true && Model.theGrid[i, j].liveNeighbors == 9)
+            {
+                <button class="game-button" type="submit" value="button" name="rowAndColumn">
+                    <img class="game-button-image" src="~/img/bomb.png" />
+                </button>
+            }
+            else if (Model.theGrid[i, j].isVisible == true)
+            {
+                <button class="game-button" type="submit" value="button" name="rowAndColumn">
+                    @Model.theGrid[i, j].liveNeighbors
+                </button>
+            }
+            else if (Model.theGrid[i, j].isFlag == true)
+            {
+                <button class="game-button" type="submit" value="@i-@j" name="rowAndColumn">
+                    <img class="game-button-image" src="~/img/flag.png" />
+                </button>
+            }
+            else
+            {
+                <button class="game-button" type="submit" value="@i-@j" name="rowAndColumn"> </button>
+            }
+        </div>
+
+    }
+    <div class="line-break"></div>
+}

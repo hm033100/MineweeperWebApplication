@@ -1,0 +1,24 @@
+﻿@model MineweeperWebApplication.Models.Cell
+
+@if (Model.isVisible == true && Model.liveNeighbors == 9)
+{
+    <button class="game-button" type="submit" value="visited" name="rowAndColumn">
+        <img class="game-button-image" src="~/img/bomb.png" />
+    </button>
+}
+else if (Model.isVisible == true)
+{
+    <button class="game-button" type="submit" value="visited" name="rowAndColumn">
+        @Model.liveNeighbors
+    </button>
+}
+else if (Model.isFlag == true)
+{
+    <button class="game-button" type="submit" value="@Model.rowNumber-@Model.columnNumber" name="rowAndColumn">
+        <img class="game-button-image" src="~/img/flag.png" />
+    </button>
+}
+else
+{
+    <button class="game-button" type="submit" value="@Model.rowNumber-@Model.columnNumber" name="rowAndColumn"> </button>
+}

@@ -3,9 +3,17 @@
         height: calc(100% - 184.05);
     }
 
+    .game-info {
+        width: 25%;
+        align-content: center;
+        vertical-align: middle;
+        text-align: center;
+        height: 100%;
+    }
+
     .game-button {
-        width: 80px;
-        height: 80px;
+        width: 60px;
+        height: 60px;
         border: grey;
         margin: 3px;
     }
@@ -21,33 +29,60 @@
     }
 
     .game-button-image {
-        width: 95%;
-        height: 95%;
+        width: 55px;
+        height: 55px;
     }
 </style>
+<script src="~/js/gamelogic.js"></script>
 
+<table>
+    <tr>
+        <td class="game-info">
+            <b>Game info</b><br><br>
+            Time: <i>insert time</i><br><br>
+            Size: 8 x 8<br><br>
+            Difficulty: 10%<br><br>
+            <form>
+                <button type="submit" asp-controller="Board" asp-action="Reset">Reset</button>
+            </form>
+        </td>
+        <td width="75%">
+            <form align="center" width="100%">
 
-<form>
-
-    <div class="button-zone game-board">
-        @for (int i = 0; i < ViewBag.Board.size; i++)
-        {
-            @for (int j = 0; j < ViewBag.Board.size; j++)
-            {
-                @if (@ViewBag.Board.theGrid[i, j].isVisible == true && @ViewBag.Board.theGrid[i, j].liveNeighbors == 9)
-                {
-                    <button class="game-button" type="submit" value="visited" name="rowAndColumn" asp-controller="Board" asp-action="HandleButtonClick">
-                        <img class="game-button-image" src="~/img/bomb.png" />
-                    </button> }
-                else if (@ViewBag.Board.theGrid[i, j].isVisible == true)
-                {
-                    <button class="game-button" type="submit" value="visited" name="rowAndColumn" asp-controller="Board" asp-action="HandleButtonClick">
-                        @ViewBag.Board.theGrid[i, j].liveNeighbors
-                    </button> }
-                else
-                {
-                    <button class="game-button" type="submit" value="@i,@j" name="rowAndColumn" asp-controller="Board" asp-action="HandleButtonClick"> </button>}}
-            <div class="line-break"></div>}
-    </div>
-
-</form>
+                <div id="gameBoard" class="button-zone game-board">
+                    @for (int i = 0; i < ViewBag.Board.size; i++)
+                    {
+                        @for (int j = 0; j < ViewBag.Board.size; j++)
+                        {
+                            <div id="@i-@j">
+                                @if (@ViewBag.Board.theGrid[i, j].isVisible == true && @ViewBag.Board.theGrid[i, j].liveNeighbors == 9)
+                                {
+                                    <button class="game-button" type="submit" value="visited" name="rowAndColumn">
+                                        <img class="game-button-image" src="~/img/bomb.png" />
+                                    </button> 
+                                }
+                                else if (@ViewBag.Board.theGrid[i, j].isVisible == true)
+                                {
+                                    <button class="game-button" type="submit" value="visited" name="rowAndColumn">
+                                        @ViewBag.Board.theGrid[i, j].liveNeighbors
+                                    </button> 
+                                }
+                                else if (@ViewBag.Board.theGrid[i, j].isFlag == true)
+                                {
+                                    <button class="game-button" type="submit" value="@i-@j" name="rowAndColumn">
+                                        <img class="game-button-image" src="~/img/flag.png" />
+                                    </button> 
+                                }
+                                else
+                                {
+                                    <button class="game-button" type="submit" value="@i-@j" name="rowAndColumn"> </button>
+                                }
+                            </div>
+                         }
+                         <div class="line-break"></div>
+                     }
+                </div>
+            </form>
+        </td>
+    </tr>
+</table>

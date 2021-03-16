@@ -13,6 +13,7 @@ namespace MineweeperWebApplication.Models
         public bool IsLive { get; set; }
         public bool isVisible { get; set; }
         public bool isValid { get; set; }
+        public bool isFlag { get; set; }
 
         public Cell(int x, int y)
         {
@@ -20,6 +21,7 @@ namespace MineweeperWebApplication.Models
             columnNumber = y;
             liveNeighbors = 0;
             isVisible = false;
+            isFlag = false;
         }
     }
 }
