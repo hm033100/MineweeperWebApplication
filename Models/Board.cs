@@ -9,7 +9,7 @@ namespace MineweeperWebApplication.Models
     public class Board
     {
         public int size { get; set; }
-        public int difficulty { get; set; }
+        public double difficulty { get; set; }
         public int liveBombs { get; set; }
         public Cell[,] theGrid { get; set; }
 

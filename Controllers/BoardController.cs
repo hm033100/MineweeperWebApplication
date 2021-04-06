@@ -8,20 +8,28 @@ using System.IO;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using MineweeperWebApplication.Service;
+using Microsoft.AspNetCore.Http;
+using System.Text.Json;
 
 namespace MineweeperWebApplication.Controllers
 {
     public class BoardController : Controller
     {
-        static Board board = new Board(10);
+        GameBusinessService service = new GameBusinessService();
+        static Game game;
         public IActionResult Index()
         {
-            board.size = 10;
+            int BoardSize = 10;
+            Board board = new Board(BoardSize);
             board.difficulty = 1;
             
             
             board.setupLiveNeighbors();
             board.calculateLiveNeighbors();
+
+            game = new Game { id = 0, Userid = 0, board = board, BoardJSON = "", date = DateTime.Now, IsFinished = false, IsSaved = false, Time = 0 };
+
             ViewBag.Board = board;
             return View();
         }
@@ -37,16 +45,16 @@ namespace MineweeperWebApplication.Controllers
                 int row = int.Parse(cell[0]);
                 int col = int.Parse(cell[1]);
 
-                if (board.theGrid[row, col].liveNeighbors == 9)
+                if (game.board.theGrid[row, col].liveNeighbors == 9)
                 {
                     gameLost = true;
                     gameOver();
                 }
                 else
                 {
-                    board.floodFill(row, col);
+                    game.board.floodFill(row, col);
 
-                    if (board.winCondition())
+                    if (game.board.winCondition())
                     {
                         gameOver();
                         gameWon = true;
@@ -54,7 +62,7 @@ namespace MineweeperWebApplication.Controllers
                 }   
             }
 
-            string BoardString = RenderRazorViewToString(this, "_buttonBoard", board);
+            string BoardString = RenderRazorViewToString(this, "_buttonBoard", game.board);
 
             return Json(new { boardString = BoardString, gameWon = gameWon, gameLost = gameLost });
 
@@ -62,25 +70,25 @@ namespace MineweeperWebApplication.Controllers
 
         public IActionResult Reset()
         {
-            board = new Board(10);
-            board.size = 10;
-            board.difficulty = 1;
+            game.board = new Board(10);
+            game.board.size = 10;
+            game.board.difficulty = 1;
 
-            board.setupLiveNeighbors();
-            board.calculateLiveNeighbors();
+            game.board.setupLiveNeighbors();
+            game.board.calculateLiveNeighbors();
 
-            ViewBag.Board = board;
+            ViewBag.Board = game.board;
 
             return View("Index");
         }
 
         public void gameOver()
         {
-            for (int i = 0; i < board.size; i++)
+            for (int i = 0; i < game.board.size; i++)
             {
-                for (int j = 0; j < board.size; j++)
+                for (int j = 0; j < game.board.size; j++)
                 {
-                    board.theGrid[i, j].isVisible = true;
+                    game.board.theGrid[i, j].isVisible = true;
                 }
             }
         }
@@ -95,10 +103,10 @@ namespace MineweeperWebApplication.Controllers
 
             if (!rowAndColumn.StartsWith("visited"))
             {
-                board.theGrid[row, col].isFlag = true;
+                game.board.theGrid[row, col].isFlag = true;
             }
 
-            return PartialView("_buttonGrid", board.theGrid[row, col]);
+            return PartialView("_buttonGrid", game.board.theGrid[row, col]);
         }
 
         public static string RenderRazorViewToString(Controller controller, string viewName, object model = null)
@@ -122,6 +130,38 @@ namespace MineweeperWebApplication.Controllers
                 viewResult.View.RenderAsync(viewContext);
                 return sw.GetStringBuilder().ToString();
             }
+        }
+
+        public IActionResult SavedGames()
+        {
+            return View("SavedGames", service.ViewByUser(0));
+        }
+
+        public IActionResult DeleteGame(int gameid)
+        {
+            service.Delete(gameid);
+
+            return View("SavedGames", service.ViewByUser(0));
+        }
+
+        public JsonResult SaveGame(int time)
+        {
+            game.Time = time;
+            game.board = game.board;
+            game.BoardJSON = JsonSerializer.Serialize(new SerializeBoard(game.board));
+            game.date = DateTime.Now;
+
+            if (!game.IsSaved)
+            {
+                game.IsSaved = true;
+                service.create(game);
+            }
+            else
+            {
+                service.Update(game);
+            }
+
+            return Json(new { url = "/Game/SavedGames" });
         }
 
     }
